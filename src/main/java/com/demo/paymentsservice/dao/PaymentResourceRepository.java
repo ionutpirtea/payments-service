@@ -8,8 +8,4 @@ import java.util.List;
 
 public interface PaymentResourceRepository extends MongoRepository<PaymentResource, String> {
 
-    PaymentResource findByPaymentResourceId(String paymentResourceId);
-
-    List<PaymentResource> findByProcessingDate(LocalDate processingDate);
-
 }
