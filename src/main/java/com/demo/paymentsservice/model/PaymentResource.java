@@ -2,12 +2,13 @@ package com.demo.paymentsservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
+import org.springframework.hateoas.ResourceSupport;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
 
-public class PaymentResource {
+public class PaymentResource extends ResourceSupport {
 
     @Id
     @JsonIgnore

@@ -1,6 +1,5 @@
 package com.demo.paymentsservice;
 
-import com.demo.utils.PaymentResourceJsonDecorator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,10 +15,4 @@ import org.springframework.context.annotation.PropertySource;
 @EnableAutoConfiguration
 public class ApplicationConfig {
 
-    @Value("${host.name}") String hostName;
-
-    @Bean
-    public PaymentResourceJsonDecorator paymentResourceDecorator() {
-        return  new PaymentResourceJsonDecorator(hostName);
-    }
 }
