@@ -1,27 +1,28 @@
 package com.demo.paymentsservice.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 import org.springframework.data.annotation.Id;
-import org.springframework.hateoas.ResourceSupport;
+import org.springframework.hateoas.Link;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 
-public class PaymentResource extends ResourceSupport {
+public class PaymentResource  {
 
     @Id
-    public String id;
+    private String id;
 
-    @JsonIgnore
-    private String organisationId;
-
+    @JsonRawValue
     private String paymentResource;
+
+    private final List<Link> links = new ArrayList<>();
 
     public PaymentResource() {
     }
 
-    public PaymentResource(String organisationId, String paymentResource) {
-        this.organisationId = organisationId;
+    public PaymentResource( String paymentResource) {
         this.paymentResource = paymentResource;
     }
 
@@ -31,30 +32,35 @@ public class PaymentResource extends ResourceSupport {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PaymentResource that = (PaymentResource) o;
-        return  Objects.equals(id, that.id) &&
-                Objects.equals(organisationId, that.organisationId);
+        return  Objects.equals(id, that.id) ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id,  organisationId);
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
-        return paymentResource.toString();
+        return "{ id:"+id + ","+ paymentResource +"}";
     }
 
-    public void setPaymentResource(String paymentResource) {
-        this.paymentResource = paymentResource;
+    public String getId() {
+        return id;
     }
 
-    public String getOrganisationId() {
-        return organisationId;
+    public void setId(String id) {
+        this.id = id;
     }
+
 
     public String getPaymentResource() {
         return paymentResource;
     }
+
+    public void add(Link link) {
+        this.links.add(link);
+    }
+
 }
 

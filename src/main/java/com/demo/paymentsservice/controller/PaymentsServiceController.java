@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.demo.utils.Utils.parseDate;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
@@ -33,7 +32,7 @@ public class PaymentsServiceController {
     public PaymentResource paymentResource(@PathVariable(value="id") String id) {
         Optional<PaymentResource> optionalPayment = paymentResourceRepository.findById(id);
         PaymentResource payment = optionalPayment.orElse(new PaymentResource());
-        Link link = linkTo(methodOn(PaymentsServiceController.class).paymentResource(payment.id)).withSelfRel();
+        Link link = linkTo(methodOn(PaymentsServiceController.class).paymentResource(payment.getId())).withSelfRel();
         payment.add(link);
         return payment;
     }
@@ -45,27 +44,33 @@ public class PaymentsServiceController {
     }
 
     @RequestMapping(value = "/paymentResource/add", method = RequestMethod.POST)
-    public String addPayment(@RequestParam(value="paymentJson") String paymentJson) {
+    public PaymentResource addPayment(@RequestParam(value="paymentJson") String paymentJson) {
         Gson gson = new Gson();
-        JsonObject jsonElement = gson.fromJson(paymentJson, JsonElement.class).getAsJsonObject();
-        PaymentResource paymentResource = new PaymentResource(jsonElement.get("organisation_id").getAsString(), jsonElement.toString());
+        JsonObject jsonObject = gson.fromJson(paymentJson, JsonObject.class);
+        PaymentResource paymentResource = new PaymentResource(jsonObject.toString());
         paymentResourceRepository.save(paymentResource);
-        return paymentJson;
+        Link link = linkTo(methodOn(PaymentsServiceController.class).paymentResource(paymentResource.getId())).withSelfRel();
+        paymentResource.add(link);
+        return paymentResource;
     }
 
-    @RequestMapping(value = "/addPayments", method = RequestMethod.POST)
+    @RequestMapping(value = "/paymentResource/addList", method = RequestMethod.POST)
     public String addPayments(@RequestParam(value="paymentsJson") String paymentsJson) {
         Gson gson = new Gson();
         JsonArray jsonElements = gson.fromJson(paymentsJson, JsonArray.class);
         List<PaymentResource> paymentResources = new ArrayList<>();
         jsonElements. forEach(jsonElement -> {
-            JsonObject jsonObject = jsonElement.getAsJsonObject();
-            PaymentResource paymentResource = new PaymentResource(jsonObject.get("organisation_id").getAsString(), jsonElement.toString());
+            JsonObject jsonObject = gson.fromJson(jsonElement, JsonObject.class);
+            PaymentResource paymentResource = new PaymentResource(jsonObject.toString());
             paymentResources.add(paymentResource);
           }
         );
         paymentResourceRepository.saveAll(paymentResources);
-        return ""+paymentResources.size()+" PaymentResources added";
+        StringBuilder idJsonList = new StringBuilder("[");
+         paymentResources.forEach( payment -> idJsonList.append(",{id:").append(payment.getId()).append("}"));
+        idJsonList.append("]");
+
+        return idJsonList.replace(1,2,"").toString();
     }
 
 
